@@ -6,7 +6,7 @@ atwhoOptions =
   search_key: null
   callbacks:
     matcher: (flag, subtext) ->
-      regexp = new XRegExp("(\\s+|^)" + flag + "([\\p{L}_-]+)$", "gi")
+      regexp = new XRegExp("(\\s+|^)" + flag + "([\\p{L}_-]+[0-9]*)$", "gi")
       match = regexp.exec(subtext)
       return null  unless match and match.length >= 2
       match[2]
@@ -45,6 +45,21 @@ atwhoOptions =
                   imageUrl: url
                   imagePreviewUrl: url
                   alt: "tiqav"
+              callback images
+
+        when kind is "i"
+          if query
+            $.getJSON "https://tumblr-us.azurewebsites.net/instagram/search",
+              user: query
+            , (data) ->
+              images = []
+              $.each data, (k, v) ->
+                url = v
+                images.push
+                  name: url
+                  imageUrl: url
+                  imagePreviewUrl: url
+                  alt: "instagram"
               callback images
 
         when kind is "g"
