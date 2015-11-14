@@ -47,6 +47,21 @@ atwhoOptions =
                   alt: "tiqav"
               callback images
 
+        when kind is "p"
+          if query
+            $.getJSON "https://tumblr-us.azurewebsites.net/tumblr/search",
+              q: query
+            , (data) ->
+              images = []
+              $.each data, (k, v) ->
+                url = v
+                images.push
+                  name: url
+                  imageUrl: url
+                  imagePreviewUrl: url
+                  alt: "tumblr:" + query
+              callback images
+
         when kind is "i"
           if query
             $.getJSON "https://tumblr-us.azurewebsites.net/instagram/search",
@@ -59,7 +74,7 @@ atwhoOptions =
                   name: url
                   imageUrl: url
                   imagePreviewUrl: url
-                  alt: "instagram"
+                  alt: "instagram:" + query
               callback images
 
         when kind is "g"
