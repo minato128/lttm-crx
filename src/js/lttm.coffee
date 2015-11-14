@@ -47,6 +47,40 @@ atwhoOptions =
                   alt: "tiqav"
               callback images
 
+        when kind is "r"
+          if query
+            tumblr_api_key = "3RljMpBePfK5f2olF2SRa35ucwzdD2b04hX98Sps73RXtdAnD5"
+            images = []
+            task1 = ($.getJSON "https://api.tumblr.com/v2/tagged",
+              api_key: tumblr_api_key,
+              tag: query,
+              filter: "text").then()
+            task2 = ($.getJSON "https://api.tumblr.com/v2/tagged",
+              api_key: tumblr_api_key,
+              tag: query,
+              before: Math.floor( new Date().getTime() / 1000 ) - 31556926,
+              filter: "text").then()
+            $.when(task1, task2).then (a, b) ->
+              $.each [a[0],b[0]], (k0, v0) ->
+                $.each v0.response, (k, v) ->
+                  if not v.type == 'photo' then return
+                  if not v.photos then return
+                  $.each v.photos, (k2, v2) ->
+                    tumnail = ""
+                    url = ""
+                    $.each v2.alt_sizes, (k3, v3) ->
+                      if v3.width is 100
+                        tumnail = v3.url
+                      if v3.width is 400
+                        url = v3.url
+                    if url 
+                      images.push
+                        name: url
+                        imageUrl: url
+                        imagePreviewUrl: tumnail
+                        alt: "tumblr:" + query
+                    callback images
+
         when kind is "p"
           if query
             $.getJSON "https://tumblr-us.azurewebsites.net/tumblr/search",
